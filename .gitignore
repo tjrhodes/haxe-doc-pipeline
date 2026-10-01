@@ -1,0 +1,4 @@
+bin/
+*.pdf
+node_modules/
+.haxelib/

@@ -1,0 +1,12 @@
+{
+  "name": "docpipe",
+  "url": "https://github.com/tjrhodes/haxe-doc-pipeline",
+  "license": "MIT",
+  "tags": ["js", "nodejs", "pdf", "qr", "weasyprint", "automation"],
+  "description": "Small Haxe/Node.js toolkit for document pipelines: promise-based shell, WeasyPrint/poppler/pdftk PDF helpers and corner-first QR code scanning.",
+  "version": "0.1.0",
+  "classPath": "src/",
+  "releasenote": "First public release, extracted from a production print-and-scan system.",
+  "contributors": ["tjrhodes"],
+  "dependencies": { "hxnodejs": "" }
+}

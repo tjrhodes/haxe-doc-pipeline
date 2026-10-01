@@ -1,0 +1,14 @@
+# Compile the examples to Node.js
+-cp src
+-cp examples
+-lib hxnodejs
+-D js-es=6
+
+--each
+
+-main ScanFolder
+-js bin/scan-folder.js
+
+--next
+-main HtmlToPdf
+-js bin/html-to-pdf.js
