@@ -1,0 +1,2 @@
+# Python tools used by docpipe.Pdf (HTML to PDF). System tools are listed in the README.
+weasyprint>=60

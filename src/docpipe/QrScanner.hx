@@ -14,8 +14,11 @@ using StringTools;
  */
 class QrScanner {
 
-    /** Size in px of each corner crop. Most printed QR codes sit in a corner. */
-    public static var cornerSize = 300;
+    /**
+     * Size in px of each corner crop. Most printed QR codes sit in a corner: on a page scanned at 300 dpi,
+     * a 25 mm code set 10 mm in from the edges reaches about 410 px from the corner, so 500 px takes it all in.
+     */
+    public static var cornerSize = 500;
 
     /** Scan an image file for QR codes. Returns decoded text or null. */
     public static function scan(filePath:String):Promise<Null<String>> {
@@ -33,7 +36,7 @@ class QrScanner {
     //───────────────────────────────────────────────────────────
 
     static function getImageSize(filePath:String):Promise<{w:Int, h:Int}> {
-        return Shell.exec('identify -format "%w %h" \'${filePath}\'')
+        return Shell.exec('identify -format "%w %h" ' + Shell.quote(filePath))
             .then(r -> {
                 var parts = r.stdout.trim().split(' ');
                 return { w: Std.parseInt(parts[0]), h: Std.parseInt(parts[1]) };
@@ -83,11 +86,11 @@ class QrScanner {
     //───────────────────────────────────────────────────────────
 
     static function cropImage(src:String, geometry:String, dest:String):Promise<Void> {
-        return Shell.exec('convert \'${src}\' -crop ${geometry} \'${dest}\'').then(_ -> null);
+        return Shell.exec('convert ' + Shell.quote(src) + ' -crop $geometry ' + Shell.quote(dest)).then(_ -> null);
     }
 
     static function readQr(path:String):Promise<Null<String>> {
-        return Shell.exec('zbarimg --quiet --raw \'${path}\'')
+        return Shell.exec('zbarimg --quiet --raw ' + Shell.quote(path))
             .then(r -> {
                 var data = r.stdout.trim();
                 return data.length > 0 ? data : null;
@@ -107,7 +110,7 @@ class QrScanner {
     //───────────────────────────────────────────────────────────
 
     static function buildCornerRegions(w:Int, h:Int):Array<Corner> {
-        var s = cornerSize;
+        var s = Std.int(Math.min(cornerSize, Math.min(w, h)));   // a small image is cropped whole, never past its edges
         return [
             { crop: '${s}x${s}+${w - s}+${h - s}', name: 'bottom-right' },
             { crop: '${s}x${s}+${w - s}+0',         name: 'top-right' },

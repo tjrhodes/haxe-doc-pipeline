@@ -68,15 +68,25 @@ class Shell {
         return exec(command, { cwd: cwd, maxBuffer: 10 * 1024 * 1024 });
     }
     
+    /**
+     * Put a value in single quotes for the shell, so spaces, quotes and other special characters in it
+     * stay part of it: `ls ${Shell.quote(path)}`.
+     */
+    public static function quote(value:String):String {
+        return "'" + value.split("'").join("'\\''") + "'";
+    }
+
+    /**
+     * The default options with the caller's on top. Only options the caller actually set are copied:
+     * passing Node an `encoding` of null makes it hand back raw bytes instead of text.
+     */
     private static function mergeOptions(?options:ExecOptions):ExecOptions {
-        if (options == null) return defaultOptions;
-        return {
-            maxBuffer: options.maxBuffer != null ? options.maxBuffer : defaultOptions.maxBuffer,
-            timeout: options.timeout != null ? options.timeout : defaultOptions.timeout,
-            cwd: options.cwd,
-            env: options.env,
-            encoding: options.encoding,
-            shell: options.shell
-        };
+        var merged:ExecOptions = { maxBuffer: defaultOptions.maxBuffer, timeout: defaultOptions.timeout, encoding: 'utf8' };
+        if (options == null) return merged;
+        for (key in Reflect.fields(options)) {
+            var value = Reflect.field(options, key);
+            if (value != null) Reflect.setField(merged, key, value);
+        }
+        return merged;
     }
 }

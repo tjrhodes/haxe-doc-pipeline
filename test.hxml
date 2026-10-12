@@ -1,0 +1,7 @@
+# Build the checks (see test/Check.hx), then run them with: node bin/check.js
+-cp src
+-cp test
+-lib hxnodejs
+-D js-es=6
+-main Check
+-js bin/check.js
